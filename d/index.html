@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>イケオジ計画｜案D 計画書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --desk:#141d33;
+  --navy:#1a2744;
+  --gold:#b8923a;
+  --gold-soft:#e8d9a0;
+  --paper:#fbf8f0;
+  --rule:#e6dcc4;
+  --ink:#222833;
+  --muted:#626877;
+  --done:#b5432f;     /* 実行済み：朱 */
+  --trying:#a77d22;   /* 試し中：金 */
+  --notyet:#5d6577;   /* まだ直せていない：鼠 */
+  --studied:#1f3566;  /* 調べてまとめた：紺 */
+  --waiting:#6a4c93;  /* 読者の判定待ち：紫 */
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--desk);color:var(--ink);font-family:"Zen Kaku Gothic New",sans-serif;font-size:16px;line-height:1.85;overflow-x:hidden}
+a{color:inherit}
+a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.mincho,h1,h2,h3{font-family:"Shippori Mincho B1",serif}
+h1,h2,h3,p,li{word-break:auto-phrase}
+
+/* ヘッダー（下へ読むと隠れる） */
+.hd{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;color:#fff;background:linear-gradient(var(--desk),rgba(20,29,51,0));transition:transform .4s ease}
+.hd.hide{transform:translateY(-110%)}
+.hd .brand{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:18px;letter-spacing:.1em;text-decoration:none}
+.hd nav a{margin-left:18px;font-size:13px;text-decoration:none;color:#d9dce4}
+@media(max-width:600px){.hd nav{display:none}}
+
+/* 表紙：スクロールでめくれる */
+.opening{height:200vh;position:relative}
+.opening .stage{position:sticky;top:0;height:100vh;display:grid;place-items:center;perspective:1800px;padding:64px 16px 24px}
+.book{position:relative;width:min(560px,92vw,calc((100svh - 100px) / 1.32));aspect-ratio:1/1.32;container-type:inline-size}
+.book .first{position:absolute;inset:0;background:var(--paper);border-radius:3px 8px 8px 3px;padding:8cqw 7cqw;box-shadow:0 30px 70px rgba(0,0,0,.45);display:flex;flex-direction:column;overflow:hidden}
+.first h2{margin:0 0 2px;font-size:5.2cqw;color:var(--navy)}
+.first .date{font-size:max(11px,2.8cqw);color:var(--muted);margin:0 0 3cqw}
+.first ol{margin:0;padding:0 0 0 1.4em;font-size:max(13px,3.3cqw);line-height:2}
+.first ol li{margin-bottom:6px}
+.first .foot{margin-top:auto;font-size:max(11px,2.8cqw);color:var(--muted);border-top:1px solid var(--rule);padding-top:12px;line-height:1.7}
+.cover{position:absolute;inset:0;transform-origin:0 50%;transform-style:preserve-3d;will-change:transform;z-index:2}
+.cover .face,.cover .back{position:absolute;inset:0;border-radius:3px 8px 8px 3px;backface-visibility:hidden}
+.cover .face{background:linear-gradient(135deg,#223259,var(--navy) 55%,#16213c);box-shadow:0 30px 70px rgba(0,0,0,.5),inset 10px 0 0 rgba(0,0,0,.18);color:#fff;padding:8cqw 8cqw 7cqw;display:flex;flex-direction:column;overflow:hidden}
+.cover .back{transform:rotateY(180deg);background:#1d2a4b}
+.face .label{font-size:max(11px,2.9cqw);color:var(--gold-soft);letter-spacing:.08em;margin:0}
+.face h1{margin:auto 0 0;font-size:13cqw;font-weight:800;line-height:1.2;color:var(--gold-soft);letter-spacing:.06em}
+.face .lead{margin:3.5cqw 0 5cqw;font-size:max(13px,3.4cqw);color:#d9dce4;line-height:1.8}
+.face dl{display:grid;grid-template-columns:auto 1fr;gap:1cqw 4cqw;margin:0;font-size:max(12px,3.1cqw);line-height:1.6;border-top:1px solid rgba(232,217,160,.35);padding-top:3.5cqw}
+.face dt{color:#a9b1c4}
+.face dd{margin:0}
+.face .hint{margin:4.5cqw 0 0;font-size:max(11px,2.9cqw);color:var(--gold-soft);display:flex;align-items:center;gap:10px}
+.face .hint::after{content:"";width:1px;height:22px;background:var(--gold-soft);animation:cue 1.8s ease-in-out infinite;transform-origin:top}
+@keyframes cue{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+
+/* 本文：机の上の書類 */
+.doc{position:relative;max-width:880px;margin:0 auto 0;padding:0 16px 80px}
+.sheet{background:var(--paper);border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:clamp(28px,6vw,64px) clamp(20px,6vw,64px);margin-bottom:36px;position:relative}
+.sheet .tabno{position:absolute;top:-14px;left:clamp(20px,6vw,64px);background:var(--gold);color:#fff;font-size:13px;font-weight:700;padding:3px 14px;border-radius:4px 4px 0 0}
+.sheet h2{font-size:clamp(28px,5vw,40px);color:var(--navy);margin:0 0 6px;line-height:1.35}
+.sheet .sub{margin:0 0 28px;color:var(--muted)}
+
+/* 凡例 */
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 0 6px;padding:0;list-style:none;font-size:13px}
+.legend li{display:flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:50%;border:2px solid currentColor}
+
+/* 計画の1行 */
+.items{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.it{position:relative;border-bottom:1px solid var(--rule);padding:22px 132px 22px 0;min-height:112px}
+.it h3{margin:0 0 4px;font-size:clamp(18px,2.6vw,21px);line-height:1.5;color:var(--navy)}
+.it p{margin:0 0 8px;font-size:15px;color:var(--ink)}
+.it a.rec{font-size:14px;color:var(--navy);font-weight:700;text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:4px}
+.it .chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:6px}
+.it .chips a{font-size:13px;border:1px solid var(--rule);background:#fff;border-radius:999px;padding:2px 12px;text-decoration:none}
+.it .chips a:hover{border-color:var(--gold)}
+@media(max-width:600px){.it{padding-right:0;padding-top:58px}}
+
+/* 判子 */
+.stamp{position:absolute;right:4px;top:22px;width:112px;height:56px;display:grid;place-items:center;border:3px solid currentColor;border-radius:6px;font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:15px;line-height:1.25;text-align:center;transform:rotate(-8deg);opacity:.9;
+  mask-image:radial-gradient(circle at 30% 40%,#000 60%,rgba(0,0,0,.75) 61%,#000 75%);-webkit-mask-image:radial-gradient(circle at 30% 40%,#000 60%,rgba(0,0,0,.75) 61%,#000 75%)}
+.stamp.done{color:var(--done)}
+.stamp.trying{color:var(--trying)}
+.stamp.notyet{color:var(--notyet);transform:rotate(5deg)}
+.stamp.studied{color:var(--studied);transform:rotate(-4deg)}
+.stamp.waiting{color:var(--waiting);transform:rotate(6deg)}
+.js .stamp{opacity:0}
+.stamp.hit{animation:hit .45s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes hit{0%{opacity:0;scale:2.2}60%{opacity:.95;scale:.94}100%{opacity:.9;scale:1}}
+@media(max-width:600px){.stamp{top:14px;right:auto;left:0;width:auto;height:auto;padding:2px 12px;font-size:13px;border-width:2px}}
+
+/* 集計 */
+.tally{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:8px 0 0}
+@media(min-width:700px){.tally{grid-template-columns:repeat(5,1fr)}}
+.tally div{border-top:3px solid currentColor;padding-top:10px}
+.tally b{display:block;font-family:"Shippori Mincho B1",serif;font-size:44px;line-height:1.1}
+.tally span{font-size:13px}
+
+.why{margin:0;padding:0;list-style:none;counter-reset:w}
+.why li{position:relative;padding:14px 0 14px 44px;border-bottom:1px solid var(--rule);font-size:17px}
+.why li::before{counter-increment:w;content:counter(w);position:absolute;left:0;top:12px;width:30px;height:30px;border-radius:50%;background:var(--navy);color:var(--gold-soft);display:grid;place-items:center;font-size:14px;font-weight:700}
+
+.cta-box{background:var(--navy);color:#fff;border-radius:6px;padding:32px;text-align:center}
+.cta-box h2{color:var(--gold-soft);font-size:clamp(24px,4vw,32px);margin:0 0 8px}
+.cta-box p{color:#d9dce4;margin:0 0 22px}
+.cta{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;font-weight:700;border-radius:6px;padding:15px 30px}
+.cta:hover{background:#a37f2e}
+
+/* 右端のインデックス（目次） */
+.index{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:6px;opacity:0;pointer-events:none;transition:opacity .4s}
+.index.show{opacity:1;pointer-events:auto}
+.index a{display:block;writing-mode:vertical-rl;font-size:13px;text-decoration:none;background:#2a3a63;color:#c9cfdc;padding:12px 7px;border-radius:6px 0 0 6px;transition:background .3s,padding .3s}
+.index a.on{background:var(--gold);color:#fff;padding-right:12px}
+@media(max-width:1000px){.index{display:none}}
+
+footer{color:#9aa3b8;font-size:13px;text-align:center;padding:0 16px 40px}
+footer a{color:#c9cfdc;margin:0 8px}
+.test-note{background:#fff3cd;color:#5c4a12;font-size:12px;text-align:center;padding:6px 12px}
+
+@media (prefers-reduced-motion: reduce){
+  .opening{height:auto}.opening .stage{position:static;height:auto;padding:96px 16px 40px}
+  .cover{display:none}.book{aspect-ratio:auto;max-height:none}.book .first{position:static}
+  .js .stamp{opacity:.9}.face .hint::after{animation:none}
+}
+</style>
+</head>
+<body>
+<header class="hd" id="hd">
+  <a class="brand" href="./">イケオジ計画</a>
+  <nav aria-label="サイト内"><a href="#ch1">計画を読む</a><a href="https://www.ikeojikeikaku.com/about">運営者について</a></nav>
+</header>
+
+<nav class="index" id="index" aria-label="計画書の目次">
+  <a href="#why">理由</a><a href="#ch1">第1章</a><a href="#ch2">第2章</a><a href="#ch3">第3章</a><a href="#now">現在</a>
+</nav>
+
+<section class="opening" aria-label="表紙">
+  <div class="stage">
+    <div class="book">
+      <div class="first" aria-hidden="true">
+        <h2>この計画書について</h2>
+        <p class="date">記入者 JAM</p>
+        <ol>
+          <li>やったことには「実行済み」の判子を押す</li>
+          <li>試している途中のものは「試し中」</li>
+          <li>できていないことは「まだ直せていない」と書く</li>
+          <li>自分で使っていないものは「調べてまとめた」</li>
+          <li>盛らない。煽らない。</li>
+        </ol>
+        <p class="foot">同じ40代・50代の人が、使えるところだけ持っていけるように、記事にして残しています。</p>
+      </div>
+      <div class="cover" id="cover">
+        <div class="face">
+          <p class="label">40代・50代の男性のための、清潔感と自信の整え方</p>
+          <h1>イケオジ<br>計画書</h1>
+          <p class="lead">50歳を前に、見た目を立て直す計画を始めました。やったこと、まだできていないことを、そのまま記録しています。</p>
+          <dl>
+            <dt>計画者</dt><dd>JAM（営業職・2026年10月で50歳）</dd>
+            <dt>開始</dt><dd>2026年9月</dd>
+            <dt>状態</dt><dd>進行中</dd>
+          </dl>
+          <p class="hint">スクロールして、計画書を開く</p>
+        </div>
+        <div class="back"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="doc">
+
+  <section class="sheet" id="why">
+    <span class="tabno">はじめに</span>
+    <h2>この計画を始めた理由</h2>
+    <p class="sub">もうモテる必要はない。家族と出かけて恥ずかしくない程度でいい。そう思っていました。</p>
+    <ol class="why">
+      <li>制汗シートから塗るデオドラントに変えたら、においの不安が消えて、自信がついた。</li>
+      <li>妻や子どもにとっても、かっこいい父親のほうがいいはずだと気づいた。</li>
+      <li>「いい人なのに、どうして」と思う独身の先輩や同僚の、力になりたいと思った。</li>
+    </ol>
+    <ul class="legend" aria-label="判子の意味" style="margin-top:28px">
+      <li style="color:var(--done)"><i></i>実行済み</li>
+      <li style="color:var(--trying)"><i></i>試し中</li>
+      <li style="color:var(--notyet)"><i></i>まだ直せていない</li>
+      <li style="color:var(--studied)"><i></i>調べてまとめた</li>
+      <li style="color:var(--waiting)"><i></i>読者の判定待ち</li>
+    </ul>
+  </section>
+
+  <section class="sheet" id="ch1">
+    <span class="tabno">第1章</span>
+    <h2>気づく</h2>
+    <p class="sub">直す前に、自分の今を知る。</p>
+    <ul class="items">
+      <li class="it"><span class="stamp done">実行済み</span>
+        <h3>ガラスに映る、自分の横姿を見る</h3>
+        <p>ショッピングモールのガラスに映った自分の猫背に、愕然としました。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/2026/09/24/130003">記録を読む</a></li>
+      <li class="it"><span class="stamp done">実行済み</span>
+        <h3>お気に入りのTシャツの首元を見る</h3>
+        <p>首元がよれているのに気づいて、着るのをやめました。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/2026/09/24/123515">記録を読む</a></li>
+      <li class="it"><span class="stamp studied">調べて<br>まとめた</span>
+        <h3>鏡を見る習慣をつくる</h3>
+        <p>1日3回・30秒で、自分では見えない自分に気づく方法。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/mirror-habit">記事を読む</a></li>
+      <li class="it"><span class="stamp studied">調べて<br>まとめた</span>
+        <h3>似合う色の手がかりをつかむ</h3>
+        <p>イエベ・ブルベの簡単なセルフチェック。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/personal-color-check">記事を読む</a></li>
+    </ul>
+  </section>
+
+  <section class="sheet" id="ch2">
+    <span class="tabno">第2章</span>
+    <h2>変わる</h2>
+    <p class="sub">お金をかけない直し方から、順番に。</p>
+    <ul class="items">
+      <li class="it"><span class="stamp done">実行済み</span>
+        <h3>制汗シートをやめて、塗るデオドラントに変える</h3>
+        <p>「臭ってないか」とビクビクする感覚が減りました。この計画のきっかけです。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/2026/09/24/130521">記録を読む</a></li>
+      <li class="it"><span class="stamp done">実行済み</span>
+        <h3>白・黒・グレーに、紺を1枚足す</h3>
+        <p>手元にあった紺のカーディガンを羽織ったら、少しだけおしゃれをしている気分になれました。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/2026/09/24/123515">記録を読む</a></li>
+      <li class="it"><span class="stamp done">実行済み</span>
+        <h3>服は、ディスプレイのセットごと買う</h3>
+        <p>最初は気恥ずかしかったけれど、単品で選んでちぐはぐになる失敗がなくなりました。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/2026/09/24/124512">記録を読む</a></li>
+      <li class="it"><span class="stamp done">実行済み</span>
+        <h3>美容院では「短めで清潔感があれば、お任せ」と頼む</h3>
+        <p>美容室と床屋、どっちに行くべきかも調べました。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/barber-or-salon">記事を読む</a></li>
+      <li class="it"><span class="stamp trying">試し中</span>
+        <h3>歯みがきのついでに、舌もみがく</h3>
+        <p>まずはお金をかけずに歯ブラシで。最初は「おぇっ」となりましたが、慣れてきました。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/bad-breath-care">口臭ケアの記事を読む</a></li>
+      <li class="it"><span class="stamp notyet">まだ<br>直せていない</span>
+        <h3>猫背を直す</h3>
+        <p>昔から友人に言われてきました。対策は、まだできていません。続報はいずれ載せます。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/posture-3-steps">筋トレなしでできる姿勢改善を読む</a></li>
+      <li class="it"><span class="stamp studied">調べて<br>まとめた</span>
+        <h3>朝の鏡で見落としやすい、細かいところ</h3>
+        <p>使っていない道具は、公式の情報をもとに比べています。</p>
+        <div class="chips">
+          <a href="https://www.ikeojikeikaku.com/entry/nose-ear-hair-cutter">鼻毛・耳毛</a>
+          <a href="https://www.ikeojikeikaku.com/entry/shaving-missed-spots">ヒゲの剃り残し</a>
+          <a href="https://www.ikeojikeikaku.com/entry/eyebrow-grooming">眉</a>
+          <a href="https://www.ikeojikeikaku.com/entry/oily-skin-shine">テカリ</a>
+          <a href="https://www.ikeojikeikaku.com/entry/dandruff-scalp-care">フケ</a>
+          <a href="https://www.ikeojikeikaku.com/entry/shirt-wrinkles">シャツのシワ</a>
+          <a href="https://www.ikeojikeikaku.com/entry/clothes-odor">服のにおい</a>
+          <a href="https://www.ikeojikeikaku.com/entry/nail-hand-care">爪</a>
+          <a href="https://www.ikeojikeikaku.com/entry/shoe-care">靴</a>
+          <a href="https://www.ikeojikeikaku.com/entry/glasses-care">メガネ</a>
+        </div></li>
+    </ul>
+  </section>
+
+  <section class="sheet" id="ch3">
+    <span class="tabno">第3章</span>
+    <h2>選ばれる</h2>
+    <p class="sub">ここは、独身の先輩や同僚の力になりたくて調べた章です。自分は既婚なので、婚活の体験は書きません。</p>
+    <ul class="items">
+      <li class="it"><span class="stamp studied">調べて<br>まとめた</span>
+        <h3>「いい人」と「都合のいい人」の境界線</h3>
+        <p>優しさが、都合よく使われて終わらないために。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/good-guy-vs-pushover">記事を読む</a></li>
+      <li class="it"><span class="stamp studied">調べて<br>まとめた</span>
+        <h3>なぜ、優しいだけでは選ばれないのか</h3>
+        <p>優しさを、相手に伝わる形にする。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/kindness-into-action">記事を読む</a></li>
+      <li class="it"><span class="stamp studied">調べて<br>まとめた</span>
+        <h3>「察してもらう」をやめる</h3>
+        <p>言わなくても分かってほしい、を手放す。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/stop-expecting-mind-reading">記事を読む</a></li>
+      <li class="it"><span class="stamp waiting">読者の<br>判定待ち</span>
+        <h3>懇親会のあと、テーブルを拭いた</h3>
+        <p>「ありがとう」と言われて、少しイケオジ感がありました。これはイケオジか、ただの親切なおっさんか。</p>
+        <a class="rec" href="https://www.ikeojikeikaku.com/entry/kindness-wiping-table">判定しに行く</a></li>
+    </ul>
+  </section>
+
+  <section class="sheet" id="now">
+    <span class="tabno">現在</span>
+    <h2>いまの進み具合</h2>
+    <p class="sub">判子の数です。記事が増えるたびに、ここも増えていきます。</p>
+    <div class="tally" id="tally">
+      <div style="color:var(--done)"><b data-k="done">0</b><span>実行済み</span></div>
+      <div style="color:var(--trying)"><b data-k="trying">0</b><span>試し中</span></div>
+      <div style="color:var(--notyet)"><b data-k="notyet">0</b><span>まだ直せていない</span></div>
+      <div style="color:var(--studied)"><b data-k="studied">0</b><span>調べてまとめた</span></div>
+      <div style="color:var(--waiting)"><b data-k="waiting">0</b><span>読者の判定待ち</span></div>
+    </div>
+  </section>
+
+  <section class="cta-box">
+    <h2>あなたの計画は、ここから。</h2>
+    <p>まずは今の自分を知るところから。30項目にチェックするだけです（無料・登録なし）。</p>
+    <a class="cta" href="https://tools.ikeojikeikaku.com/check/" target="_blank" rel="noopener">清潔感セルフチェックをやってみる</a>
+  </section>
+</main>
+
+<footer>
+  <a href="https://www.ikeojikeikaku.com/about">運営者プロフィール</a>
+  <a href="https://www.ikeojikeikaku.com/entry/2026/09/24/115841">プライバシーポリシー・免責事項</a>
+  <a href="https://www.ikeojikeikaku.com/entry/2026/09/24/115906">お問い合わせ</a>
+</footer>
+<div class="test-note">テスト用のサンプルです（案D）。記事のリンクは、今のはてなブログの記事につながっています。</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  document.documentElement.classList.add('js');
+
+  // ヘッダーの出し入れと、右端の目次
+  const hd = $('#hd'), idx = $('#index'), tabs = $$('#index a'), secs = tabs.map(a => $(a.getAttribute('href')));
+  let lastY = scrollY;
+  function onScroll() {
+    const y = scrollY;
+    hd.classList.toggle('hide', y > lastY && y > 120); lastY = y;
+    idx.classList.toggle('show', secs[0].getBoundingClientRect().top < innerHeight * .6);
+    let cur = 0; secs.forEach((s, i) => { if (s.getBoundingClientRect().top < innerHeight * .45) cur = i; });
+    tabs.forEach((a, i) => a.classList.toggle('on', i === cur));
+  }
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // 判子：画面に入ったら押される
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('hit'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -20% 0px' });
+  $$('.stamp').forEach(s => reduce ? s.classList.add('hit') : io.observe(s));
+
+  // 集計：判子の数をそのまま数える
+  const counts = {}; $$('.items .stamp').forEach(s => { const k = s.classList[1]; counts[k] = (counts[k] || 0) + 1; });
+  const nums = $$('#tally b');
+  function countUp() {
+    nums.forEach(b => {
+      const to = counts[b.dataset.k] || 0;
+      if (reduce || !window.gsap) { b.textContent = to; return; }
+      const o = { v: 0 }; gsap.to(o, { v: to, duration: 1.4, ease: 'power2.out', onUpdate: () => b.textContent = Math.round(o.v) });
+    });
+  }
+  new IntersectionObserver((es, ob) => es.forEach(e => { if (e.isIntersecting) { countUp(); ob.disconnect(); } }), { threshold: .4 }).observe($('#tally'));
+
+  if (reduce || !window.gsap) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  // 表紙：スクロールに合わせて、左を軸にめくれる
+  gsap.timeline({ scrollTrigger: { trigger: '.opening', start: 'top top', end: 'bottom bottom', scrub: .6 } })
+    .to('#cover', { rotateY: -168, ease: 'power2.inOut', duration: 1 })
+    .to('.book', { scale: .94, ease: 'none', duration: .4 }, '-=.2');
+
+  // 表紙が開くまでの一瞬：ページを開いたときに表紙が少し持ち上がる
+  gsap.from('.book', { y: 40, rotateX: 8, opacity: 0, duration: 1.1, ease: 'power3.out' });
+})();
+</script>
+</body>
+</html>
