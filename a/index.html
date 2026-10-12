@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>イケオジ計画｜案A くもった鏡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+.hero{background:radial-gradient(ellipse at 50% 35%,#24335a 0%,var(--navy) 55%,var(--navy-deep) 100%);color:#fff;padding:20px 0 64px;overflow:hidden}
+.bar{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.brand{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:20px;letter-spacing:.08em;text-decoration:none}
+.bar nav a{margin-left:18px;color:#d9dce4;text-decoration:none}
+.bar nav a:hover{color:var(--gold-soft)}
+
+.mirror-area{display:grid;grid-template-columns:1fr;gap:32px;align-items:center;margin-top:36px}
+@media(min-width:900px){.mirror-area{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px}}
+
+/* 鏡：金の細い縁＋面取り */
+.mirror{position:relative;aspect-ratio:4/5;max-height:620px;width:100%;max-width:500px;margin:0 auto;border-radius:48% 48% 6px 6px/36% 36% 6px 6px;padding:10px;background:linear-gradient(160deg,#d9bd78,#8f6d25 45%,#e8d9a0 70%,#9c7a2e);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.glass{position:relative;width:100%;height:100%;border-radius:inherit;overflow:hidden;background:linear-gradient(170deg,#3a4d78 0%,#22314f 50%,#1a2744 100%)}
+.reflect{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:12% 10%;text-align:left}
+.reflect .say{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:clamp(34px,7.4vw,58px);line-height:1.35;margin:0;color:#fff;letter-spacing:.04em}
+.reflect .say em{font-style:normal;display:table}
+.reflect .say em:nth-child(3){color:var(--gold-soft)}
+.reflect .who{margin:22px 0 0;font-size:14px;color:#c9d1e2;line-height:1.7}
+.glass::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 70%,rgba(255,255,255,.06) 100%);pointer-events:none}
+canvas.fog{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity 1.2s ease}
+canvas.fog.gone{opacity:0;pointer-events:none}
+
+.side h1{font-family:"Shippori Mincho B1",serif;font-weight:700;font-size:clamp(24px,3.2vw,32px);line-height:1.5;margin:0 0 16px}
+.nb{display:inline-block}
+.side p{color:#d9dce4;margin:0 0 24px;max-width:28em}
+.hint{font-size:13px;color:var(--gold-soft);margin:0 0 20px}
+.wipe-btn{background:none;border:1px solid rgba(232,217,160,.6);color:var(--gold-soft);border-radius:6px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;margin-left:12px}
+.wipe-btn:hover{border-color:var(--gold-soft)}
+.side .cta small{display:block;font-weight:400;font-size:12px;opacity:.9}
+@media(max-width:899px){.side{text-align:left}}
+@media(max-width:560px){.bar nav{display:none}.mirror{max-width:300px;aspect-ratio:5/6}.mirror-area{margin-top:24px}.reflect{padding:14% 11% 8%}}
+</style>
+</head>
+<body>
+<div class="test-note">テスト用のサンプルです（案A）。記事のリンクは、今のはてなブログの記事につながっています。</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <a class="brand" href="./">イケオジ計画</a>
+      <nav aria-label="サイト内">
+        <a href="#stages">記事をさがす</a>
+        <a href="https://www.ikeojikeikaku.com/about">運営者について</a>
+      </nav>
+    </div>
+
+    <div class="mirror-area">
+      <div class="mirror">
+        <div class="glass" id="glass">
+          <div class="reflect">
+            <p class="say"><em>気づく、</em><em>変わる、</em><em>選ばれる。</em></p>
+            <p class="who">40代・50代の男性のための、<br>清潔感と自信の整え方。</p>
+          </div>
+          <canvas class="fog" id="fog" aria-hidden="true"></canvas>
+        </div>
+      </div>
+
+      <div class="side">
+        <h1><span class="nb">自分の顔は、</span><span class="nb">自分では</span><span class="nb">意外と見えていない。</span></h1>
+        <p>鼻毛、ヒゲの剃り残し、肩のフケ。毎朝鏡の前に立っているのに、見えていないところがあります。もうすぐ50歳の運営者が、自分で試したことと、調べたことをまとめています。</p>
+        <p class="hint">鏡のくもりを、指やマウスでふいてみてください。<button class="wipe-btn" id="wipeAll" type="button">まとめてふく</button></p>
+        <a class="cta" href="https://tools.ikeojikeikaku.com/check/" target="_blank" rel="noopener">清潔感セルフチェックをやってみる<small>30項目にチェックするだけ（無料・登録なし）</small></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="stages wrap" id="stages">
+    <h2>3つの段階から、記事をさがす</h2>
+    <p class="lead-s">見た目を整える順番は、気づく → 変わる → 選ばれる。いまの自分に近いところから読めます。</p>
+    <div class="stage-grid">
+      <div class="stage">
+        <h3>気づく<span>自分の今を知る</span></h3>
+        <p>直す前に、どこが気になるかを知るところから。</p>
+        <ul>
+          <li><a href="https://www.ikeojikeikaku.com/entry/2026/09/26/073937">清潔感セルフチェックリスト30項目</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/mirror-habit">鏡を見る習慣がない40代・50代へ</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/personal-color-check">イエベ・ブルベって何？似合う色のセルフチェック</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/2026/09/24/130003">猫背を直すだけで、なぜ印象が変わるのか</a></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <h3>変わる<span>順番に整える</span></h3>
+        <p>お金をかけない直し方から。道具はそのあと。</p>
+        <ul>
+          <li><a href="https://www.ikeojikeikaku.com/entry/2026/09/24/130521">制汗シートから塗るデオドラントに変えた話</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/shaving-missed-spots">ヒゲの剃り残しをなくす</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/posture-3-steps">筋トレなしでできる姿勢改善3ステップ</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/barber-or-salon">美容室と床屋、どっちに行くべきか</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/2026/09/24/123515">白・黒・グレーに、1色足すだけ</a></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <h3>選ばれる<span>気持ちを整える</span></h3>
+        <p>見た目の次は、人との関わり方と自信。</p>
+        <ul>
+          <li><a href="https://www.ikeojikeikaku.com/entry/good-guy-vs-pushover">「いい人」と「都合のいい人」の境界線</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/kindness-into-action">なぜ優しいだけでは選ばれないのか</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/never-too-late">「今さら遅い」と思ったあなたへ</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/compare-with-yesterday">比べる相手は、昨日の自分</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="picks wrap">
+    <h2>はじめて読むなら、この3本</h2>
+    <p class="lead-s">全体の地図と、今の自分を知る記事と、運営者の体験です。</p>
+    <div class="pick-list">
+      <a href="https://www.ikeojikeikaku.com/entry/2026/09/26/071316"><b>全体の地図</b>イケオジになるには？40代から始める「気づく→変わる→選ばれる」ロードマップ</a>
+      <a href="https://www.ikeojikeikaku.com/entry/2026/09/26/073937"><b>自分の今を知る</b>清潔感セルフチェックリスト30項目</a>
+      <a href="https://www.ikeojikeikaku.com/entry/2026/09/24/130521"><b>運営者の体験</b>制汗シートを卒業した話。塗るデオドラントに変えて変わったこと</a>
+    </div>
+  </section>
+
+  <section class="about wrap">
+    <div class="about-box">
+      <h2>書いている人</h2>
+      <div>
+        <p>運営者のJAMです。営業職で、2026年10月で50歳になります。妻と子どもがいます。</p>
+        <p>塗るタイプのデオドラントに変えて、においの不安が消えたのがきっかけで、このブログを始めました。使ったものは使ったと、調べただけのものは調べただけと書いています。</p>
+        <a class="text-link" href="https://www.ikeojikeikaku.com/about">プロフィールを読む</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>イケオジ計画</span>
+    <span><a href="https://www.ikeojikeikaku.com/entry/2026/09/24/115841">プライバシーポリシー・免責事項</a>　<a href="https://www.ikeojikeikaku.com/entry/2026/09/24/115906">お問い合わせ</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const glass = document.getElementById('glass');
+  const cv = document.getElementById('fog');
+  const ctx = cv.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w, h, dpr, done = false;
+
+  function paintFog() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    w = glass.clientWidth; h = glass.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, 'rgba(214,222,236,0.93)');
+    g.addColorStop(1, 'rgba(188,198,218,0.95)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    // 水滴の粒
+    for (let i = 0; i < 260; i++) {
+      const x = Math.random() * w, y = Math.random() * h, r = Math.random() * 2.2 + .4;
+      ctx.fillStyle = `rgba(255,255,255,${Math.random() * .5 + .2})`;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  function wipe(x, y, r) {
+    ctx.globalCompositeOperation = 'destination-out';
+    const g = ctx.createRadialGradient(x, y, r * .35, x, y, r);
+    g.addColorStop(0, 'rgba(0,0,0,1)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+
+  let last = null, checkTimer = null;
+  function stroke(x, y) {
+    const r = Math.max(34, w * .11);
+    if (last) {
+      const dx = x - last.x, dy = y - last.y, n = Math.ceil(Math.hypot(dx, dy) / (r * .3));
+      for (let i = 1; i <= n; i++) wipe(last.x + dx * i / n, last.y + dy * i / n, r);
+    } else wipe(x, y, r);
+    last = { x, y };
+    clearTimeout(checkTimer); checkTimer = setTimeout(checkCleared, 200);
+  }
+
+  function checkCleared() {
+    if (done) return;
+    const data = ctx.getImageData(0, 0, cv.width, cv.height).data;
+    let clear = 0, total = 0;
+    for (let i = 3; i < data.length; i += 4 * 40) { total++; if (data[i] < 60) clear++; }
+    if (clear / total > 0.45) finish();
+  }
+
+  function finish() { done = true; cv.classList.add('gone'); }
+
+  function pos(e) { const b = cv.getBoundingClientRect(); return { x: e.clientX - b.left, y: e.clientY - b.top }; }
+  cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); last = null; const p = pos(e); stroke(p.x, p.y); });
+  cv.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'mouse') { const p = pos(e); stroke(p.x, p.y); } });
+  cv.addEventListener('pointerup', () => last = null);
+  cv.addEventListener('pointerleave', () => last = null);
+  document.getElementById('wipeAll').addEventListener('click', finish);
+
+  // 最初の一筆：ページを開いたときに一度だけ、左上から斜めにふく
+  function introStroke() {
+    // 「気づく、」の行だけを横にひとふき。残りは読む人がふく
+    const gb = glass.getBoundingClientRect(), eb = glass.querySelector('.say em').getBoundingClientRect();
+    const y = (eb.top + eb.height / 2 - gb.top) / h;
+    const x0 = (eb.left - gb.left - 10) / w, x1 = (eb.right - gb.left + 10) / w;
+    const pts = [[x0, y + .01], [(x0 + x1) / 2, y - .01], [x1, y]];
+    const dur = 1400; let start = null, prev = 0;
+    const at = t => {
+      const f = t * (pts.length - 1), i = Math.min(Math.floor(f), pts.length - 2), k = f - i;
+      const a = pts[i], b = pts[i + 1];
+      return [(a[0] + (b[0] - a[0]) * k) * w, (a[1] + (b[1] - a[1]) * k) * h];
+    };
+    function step(now) {
+      if (start === null) start = now;
+      const t = Math.min(1, (now - start) / dur);
+      // フレームが飛んでも線が途切れないよう、前回の位置から細かく刻んで描く
+      for (let s = prev; s <= t; s += 0.01) stroke(...at(s));
+      stroke(...at(t)); prev = t;
+      if (t < 1) requestAnimationFrame(step); else last = null;
+    }
+    requestAnimationFrame(step);
+  }
+
+  paintFog();
+  if (reduce) finish();
+  else setTimeout(introStroke, 700);
+  let rw = innerWidth;
+  addEventListener('resize', () => { if (!done && innerWidth !== rw) { rw = innerWidth; paintFog(); } });
+})();
+</script>
+</body>
+</html>
