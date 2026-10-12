@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>イケオジ計画｜案C スクロールで読む</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;700&family=Cormorant+Garamond:ital,wght@1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+html{scroll-behavior:auto}
+body{overflow-x:hidden;transition:background-color .8s ease}
+.it{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500}
+
+/* 23 隠れるヘッダー ＋ 09 読了バー */
+.hd{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:16px 24px;color:#fff;mix-blend-mode:difference;transition:transform .45s cubic-bezier(.6,0,.2,1)}
+.hd.hide{transform:translateY(-110%)}
+.hd .brand{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:18px;letter-spacing:.1em;text-decoration:none}
+.hd nav a{margin-left:20px;font-size:13px;text-decoration:none}
+.progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);z-index:60}
+@media(max-width:600px){.hd nav{display:none}}
+
+/* 24 スクロールスパイ */
+.spy{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.spy a{display:flex;align-items:center;justify-content:flex-end;gap:10px;text-decoration:none;font-size:12px;color:var(--muted)}
+.spy a span{opacity:0;transform:translateX(6px);transition:.3s}
+.spy a i{width:8px;height:8px;border-radius:50%;border:1px solid currentColor;transition:.3s}
+.spy a.on{color:var(--gold)}
+.spy a.on i{background:var(--gold);transform:scale(1.4)}
+.spy a.on span,.spy a:hover span{opacity:1;transform:none}
+.dark .spy a{color:#8d96ab}
+@media(max-width:1180px){.spy{display:none}}
+h1,h2,h3,.statement p,.tw{word-break:auto-phrase;text-wrap:balance}
+
+/* ヒーロー：04 テキストリビール ＋ 06 ブラーイン ＋ 13 線を描く */
+.hero{min-height:100svh;background:var(--navy);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:96px 24px 64px;position:relative;overflow:hidden}
+.hero-in{max-width:1100px;margin:0 auto;width:100%}
+.hero .kicker{font-size:14px;color:var(--gold-soft);margin:0 0 28px;letter-spacing:.06em}
+.hero h1{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:clamp(46px,10.5vw,148px);line-height:1.12;margin:0;letter-spacing:.02em}
+.hero h1 .line{display:block;overflow:hidden;padding-bottom:.06em;white-space:nowrap}
+.hero h1 .ch{display:inline-block;will-change:transform}
+.hero h1 .line:nth-child(3){color:var(--gold-soft)}
+.hero .rule{display:block;width:min(560px,80%);height:24px;margin:28px 0 20px;overflow:visible}
+.hero .rule path{fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round}
+.hero .sub{max-width:30em;color:#d9dce4;font-size:16px;margin:0}
+.hero .ghost{position:absolute;right:-2vw;bottom:-6vw;font-size:34vw;line-height:1;color:rgba(255,255,255,.035);font-family:"Cormorant Garamond",serif;font-style:italic;pointer-events:none;will-change:transform}
+
+/* 16 マーキー（スクロールの速さで加速） */
+.marquee{background:var(--navy-deep);color:var(--gold-soft);overflow:hidden;white-space:nowrap;padding:18px 0;border-top:1px solid rgba(232,217,160,.25);border-bottom:1px solid rgba(232,217,160,.25)}
+.marquee .track{display:inline-flex;gap:48px;will-change:transform}
+.marquee span{font-family:"Shippori Mincho B1",serif;font-size:clamp(22px,3vw,34px);font-weight:700}
+.marquee span.o{color:transparent;-webkit-text-stroke:1px var(--gold-soft)}
+
+/* 14 テキストフィル */
+.statement{padding:22vh 24px}
+.statement p{max-width:900px;margin:0 auto;font-family:"Shippori Mincho B1",serif;font-weight:700;font-size:clamp(26px,4.4vw,52px);line-height:1.6}
+.statement .w{color:rgba(26,39,68,.14);transition:color .2s}
+.statement .w.f{color:var(--navy)}
+.statement .w.g.f{color:var(--gold)}
+
+/* 11 スクロールズーム ＋ 05 マスクリビール */
+.zoom{height:220vh;position:relative}
+.zoom .stick{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden}
+.zoom .frame{width:42vw;height:28vw;min-width:260px;min-height:180px;background:var(--navy);border-radius:4px;display:grid;place-items:center;will-change:transform,border-radius}
+.zoom .frame p{margin:0;color:#fff;font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:clamp(20px,2.4vw,30px);text-align:center;line-height:1.6}
+.zoom .frame p span{display:block;clip-path:inset(0 100% 0 0)}
+
+/* 19 スクロールテリング（ピン留め＋背景色トランジション） */
+.story{position:relative}
+.story-grid{display:grid;grid-template-columns:1fr;max-width:1100px;margin:0 auto;padding:0 24px}
+@media(min-width:900px){.story-grid{grid-template-columns:1fr 1fr;gap:64px}}
+.story .pin{position:sticky;top:0;height:100vh;transition:background-color .8s ease;display:flex;flex-direction:column;justify-content:center}
+.story .word{position:relative;height:1.3em;font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:clamp(64px,10vw,140px);line-height:1.2}
+.story .word b{position:absolute;left:0;top:0;clip-path:inset(0 0 100% 0);transition:clip-path .7s cubic-bezier(.7,0,.2,1);white-space:nowrap}
+.story .word b.on{clip-path:inset(0 0 0 0)}
+.story .step-no{font-size:14px;margin:0 0 6px;color:var(--gold)}
+.story .meter{display:flex;gap:8px;margin-top:28px}
+.story .meter i{height:3px;width:48px;background:currentColor;opacity:.2;transition:opacity .4s}
+.story .meter i.on{opacity:1;background:var(--gold)}
+.panel{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:10vh 0}
+.panel h3{font-family:"Shippori Mincho B1",serif;font-size:clamp(24px,2.6vw,32px);line-height:1.5;margin:0 0 16px}
+.panel p{margin:0 0 24px;max-width:30em}
+.panel ul{list-style:none;margin:0;padding:0;border-top:1px solid currentColor;border-color:rgba(127,127,127,.3)}
+.panel li{border-bottom:1px solid rgba(127,127,127,.3)}
+.panel li a{display:flex;justify-content:space-between;gap:12px;padding:14px 0;text-decoration:none}
+.panel li a::after{content:"";flex:none;width:18px;height:1px;background:var(--gold);align-self:center;transition:width .3s}
+.panel li a:hover::after{width:36px}
+@media(max-width:899px){
+  .story .pin{height:auto;top:0;padding:64px 20px 12px;margin:0 -20px;z-index:2;background:var(--bgc)}
+  .story .word{font-size:56px}
+  .panel{min-height:80vh}
+}
+body.s1{background:var(--ivory);--bgc:var(--ivory)}
+body.s2{background:#ece4d0;--bgc:#ece4d0}
+body.s3{background:var(--navy);color:#fff;--bgc:var(--navy)}
+body.s3 .panel ul,body.s3 .panel li{border-color:rgba(255,255,255,.2)}
+
+/* 08 カウントアップ */
+.numbers{padding:18vh 24px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:48px}
+@media(min-width:760px){.numbers{grid-template-columns:repeat(3,1fr)}}
+.num b{display:block;font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:clamp(72px,9vw,120px);line-height:1;color:var(--navy)}
+.num b small{font-size:.32em;margin-left:6px;color:var(--gold)}
+.num p{margin:10px 0 0;font-size:15px;color:var(--muted);max-width:18em}
+
+/* 22 横スクロール */
+.hscroll{background:var(--navy-deep);color:#fff;overflow:hidden}
+.hscroll .head{max-width:1100px;margin:0 auto;padding:10vh 24px 28px}
+.hscroll h2{font-family:"Shippori Mincho B1",serif;font-size:clamp(28px,3.4vw,42px);margin:0 0 8px}
+.hscroll .head p{margin:0;color:#c9cfdc}
+.rail{display:flex;gap:24px;padding:0 24px 14vh;width:max-content;will-change:transform}
+.card{width:min(78vw,340px);height:min(420px,56vh);flex:none;border:1px solid rgba(232,217,160,.3);border-radius:4px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;text-decoration:none;background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,0))}
+.card .where{font-size:13px;color:var(--gold-soft)}
+.card h3{font-family:"Shippori Mincho B1",serif;font-size:24px;line-height:1.5;margin:0}
+.card .go{font-size:13px;color:#c9cfdc;border-top:1px solid rgba(255,255,255,.15);padding-top:14px}
+.card:hover{border-color:var(--gold)}
+
+/* 20 カードスタック */
+.stack{max-width:900px;margin:0 auto;padding:16vh 24px 8vh}
+.stack h2{font-family:"Shippori Mincho B1",serif;font-size:clamp(28px,3.4vw,42px);color:var(--navy);margin:0 0 40px}
+.sc{position:sticky;top:14vh;min-height:52vh;margin-bottom:6vh;border-radius:6px;padding:40px;display:flex;flex-direction:column;justify-content:space-between;text-decoration:none;box-shadow:0 -10px 30px rgba(26,39,68,.12);transform-origin:50% 0}
+.sc:nth-of-type(1){background:#fff;color:var(--ink)}
+.sc:nth-of-type(2){background:#efe6cf;color:var(--ink);top:17vh}
+.sc:nth-of-type(3){background:var(--navy);color:#fff;top:20vh}
+.sc .k{font-size:14px;color:var(--gold)}
+.sc h3{font-family:"Shippori Mincho B1",serif;font-size:clamp(24px,3.2vw,38px);line-height:1.5;margin:12px 0 0}
+.sc p{margin:16px 0 0;max-width:30em;opacity:.8}
+
+/* 07 タイプライター */
+.final{padding:20vh 24px 22vh;text-align:center}
+.final .tw{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:clamp(30px,5vw,60px);color:var(--navy);min-height:1.6em;margin:0 0 12px}
+.final .tw::after{content:"";display:inline-block;width:3px;height:.9em;background:var(--gold);margin-left:6px;vertical-align:-.08em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.final p{color:var(--muted);margin:0 0 32px}
+.final .cta{font-size:18px;padding:18px 36px}
+
+.about{padding-top:0}
+
+/* 01・03 出てくる動き */
+.rv{opacity:0;transform:translateY(28px)}
+
+@media (prefers-reduced-motion: reduce){
+  .rv{opacity:1;transform:none}
+  .statement .w{color:var(--navy)}
+  .zoom{height:auto}.zoom .stick{position:static;height:auto;padding:12vh 0}
+  .zoom .frame p span{clip-path:none}
+  .story .word b{transition:none}
+  .final .tw::after{animation:none}
+}
+</style>
+</head>
+<body class="s1">
+<div class="progress" id="progress"></div>
+<header class="hd" id="hd">
+  <a class="brand" href="./">イケオジ計画</a>
+  <nav aria-label="サイト内"><a href="#steps">記事をさがす</a><a href="https://www.ikeojikeikaku.com/about">運営者について</a></nav>
+</header>
+
+<ul class="spy" id="spy" aria-label="このページの目次">
+  <li><a href="#top"><span>はじめに</span><i></i></a></li>
+  <li><a href="#steps"><span>3つの段階</span><i></i></a></li>
+  <li><a href="#change"><span>整える記事</span><i></i></a></li>
+  <li><a href="#first"><span>はじめの3本</span><i></i></a></li>
+  <li><a href="#check"><span>セルフチェック</span><i></i></a></li>
+</ul>
+
+<section class="hero" id="top">
+  <div class="hero-in">
+    <p class="kicker">40代・50代の男性のための、清潔感と自信の整え方</p>
+    <h1 aria-label="気づく、変わる、選ばれる。">
+      <span class="line" aria-hidden="true">気づく、</span>
+      <span class="line" aria-hidden="true">変わる、</span>
+      <span class="line" aria-hidden="true">選ばれる。</span>
+    </h1>
+    <svg class="rule" viewBox="0 0 560 24" preserveAspectRatio="none" aria-hidden="true"><path id="rule" d="M2 14 C 140 4, 280 22, 420 10 S 540 8, 558 12"/></svg>
+    <p class="sub">もうすぐ50歳の運営者が、自分で試したことと、調べたことを正直にまとめています。</p>
+  </div>
+  <div class="ghost it" aria-hidden="true">Ikeoji</div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="track" id="mq">
+    <span>清潔感</span><span class="o">におい</span><span>姿勢</span><span class="o">髪型</span><span>色</span><span class="o">手もと</span><span>足もと</span><span class="o">自信</span>
+    <span>清潔感</span><span class="o">におい</span><span>姿勢</span><span class="o">髪型</span><span>色</span><span class="o">手もと</span><span>足もと</span><span class="o">自信</span>
+  </div>
+</div>
+
+<section class="statement">
+  <p id="statement" data-text="高い服より、|毎朝の小さな手入れ。|煽らず、盛らず。|使ったものは使ったと、|調べただけのものは|調べただけと書きます。"></p>
+</section>
+
+<section class="zoom" id="zoom">
+  <div class="stick">
+    <div class="frame" id="frame">
+      <p><span>見た目を整える順番は、</span><span>3つの段階です。</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="story" id="steps">
+  <div class="story-grid">
+    <div class="pin">
+      <p class="step-no" id="stepNo">段階 1 / 3</p>
+      <div class="word" aria-hidden="true"><b class="on">気づく</b><b>変わる</b><b>選ばれる</b></div>
+      <div class="meter"><i class="on"></i><i></i><i></i></div>
+    </div>
+    <div>
+      <article class="panel" data-step="0">
+        <h3>直す前に、自分の今を知る。</h3>
+        <p>毎朝鏡を見ていても、自分では見えていないところがあります。まずは、どこが気になるかを知るところから。</p>
+        <ul>
+          <li><a href="https://www.ikeojikeikaku.com/entry/2026/09/26/073937">清潔感セルフチェックリスト30項目</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/mirror-habit">鏡を見る習慣がない40代・50代へ</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/personal-color-check">似合う色のセルフチェック</a></li>
+        </ul>
+      </article>
+      <article class="panel" data-step="1">
+        <h3>お金をかけない直し方から、順番に。</h3>
+        <p>道具はそのあと。家にある物や100円ショップで済むなら、それで十分です。</p>
+        <ul>
+          <li><a href="https://www.ikeojikeikaku.com/entry/2026/09/24/130521">制汗シートから塗るデオドラントに変えた話</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/posture-3-steps">筋トレなしでできる姿勢改善3ステップ</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/barber-or-salon">美容室と床屋、どっちに行くべきか</a></li>
+        </ul>
+      </article>
+      <article class="panel" data-step="2">
+        <h3>見た目の次は、関わり方と自信。</h3>
+        <p>「いい人」で終わらないために。優しさを、相手に伝わる形にする方法を考えます。</p>
+        <ul>
+          <li><a href="https://www.ikeojikeikaku.com/entry/good-guy-vs-pushover">「いい人」と「都合のいい人」の境界線</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/kindness-into-action">なぜ優しいだけでは選ばれないのか</a></li>
+          <li><a href="https://www.ikeojikeikaku.com/entry/never-too-late">「今さら遅い」と思ったあなたへ</a></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="numbers" aria-label="このブログでできること">
+  <div class="num rv"><b><span class="cu" data-to="30">0</span><small>項目</small></b><p>清潔感セルフチェック。チェックするだけで、今の自分が点数でわかります。</p></div>
+  <div class="num rv"><b><span class="cu" data-to="12">0</span><small>か所</small></b><p>朝の鏡で見落としやすいところ。鼻毛から靴まで、直し方の記事があります。</p></div>
+  <div class="num rv"><b><span class="cu" data-to="3">0</span><small>段階</small></b><p>気づく、変わる、選ばれる。いまの自分に近いところから読めます。</p></div>
+</section>
+
+<section class="hscroll" id="change">
+  <div class="head">
+    <h2>細かいところを、ひとつずつ整える</h2>
+    <p>横に流れていきます。気になるものから読んでください。</p>
+  </div>
+  <div class="rail" id="rail">
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/nose-ear-hair-cutter"><span class="where">顔・正面</span><h3>鼻毛・耳毛が気になったら</h3><span class="go">カッターの選び方を読む</span></a>
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/shaving-missed-spots"><span class="where">顔・あご下</span><h3>ヒゲの剃り残しをなくす</h3><span class="go">剃り方とシェーバーを読む</span></a>
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/eyebrow-grooming"><span class="where">顔・目もと</span><h3>眉を整える</h3><span class="go">整え方を読む</span></a>
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/oily-skin-shine"><span class="where">顔・肌</span><h3>テカリと皮脂の対策</h3><span class="go">対策を読む</span></a>
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/dandruff-scalp-care"><span class="where">頭・肩</span><h3>フケと頭皮のケア</h3><span class="go">ケアを読む</span></a>
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/shirt-wrinkles"><span class="where">服</span><h3>シャツのシワ対策</h3><span class="go">対策を読む</span></a>
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/nail-hand-care"><span class="where">手もと</span><h3>爪と手元のケア</h3><span class="go">ケアを読む</span></a>
+    <a class="card" href="https://www.ikeojikeikaku.com/entry/shoe-care"><span class="where">足もと</span><h3>靴の手入れ</h3><span class="go">手入れを読む</span></a>
+  </div>
+</section>
+
+<section class="stack" id="first">
+  <h2 class="rv">はじめて読むなら、この3本</h2>
+  <a class="sc" href="https://www.ikeojikeikaku.com/entry/2026/09/26/071316"><span class="k">全体の地図</span><div><h3>イケオジになるには？40代から始める「気づく→変わる→選ばれる」ロードマップ</h3><p>何から始めればいいかを、順番にまとめた記事です。</p></div></a>
+  <a class="sc" href="https://www.ikeojikeikaku.com/entry/2026/09/26/073937"><span class="k">自分の今を知る</span><div><h3>清潔感セルフチェックリスト30項目</h3><p>見落としやすいポイントと、その直し方。</p></div></a>
+  <a class="sc" href="https://www.ikeojikeikaku.com/entry/2026/09/24/130521"><span class="k">運営者の体験</span><div><h3>制汗シートを卒業した話。塗るデオドラントに変えて変わったこと</h3><p>このブログを始めたきっかけです。</p></div></a>
+</section>
+
+<section class="about wrap">
+  <div class="about-box rv">
+    <h2>書いている人</h2>
+    <div>
+      <p>運営者のJAMです。営業職で、2026年10月で50歳になります。妻と子どもがいます。</p>
+      <p>塗るタイプのデオドラントに変えて、においの不安が消えたのがきっかけで、このブログを始めました。</p>
+      <a class="text-link" href="https://www.ikeojikeikaku.com/about">プロフィールを読む</a>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="check">
+  <p class="tw" id="tw" data-text="今の自分の清潔感、何点？"></p>
+  <p>30項目にチェックするだけ。無料・登録なしです。</p>
+  <a class="cta" href="https://tools.ikeojikeikaku.com/check/" target="_blank" rel="noopener">清潔感セルフチェックをやってみる</a>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>イケオジ計画</span>
+    <span><a href="https://www.ikeojikeikaku.com/entry/2026/09/24/115841">プライバシーポリシー・免責事項</a>　<a href="https://www.ikeojikeikaku.com/entry/2026/09/24/115906">お問い合わせ</a></span>
+  </div>
+</footer>
+<div class="test-note">テスト用のサンプルです（案C）。記事のリンクは、今のはてなブログの記事につながっています。</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+  // 文字を1字ずつに分ける
+  $$('.hero h1 .line').forEach(l => { l.innerHTML = [...l.textContent].map(c => `<span class="ch">${c}</span>`).join(''); });
+  const st = $('#statement');
+  st.innerHTML = st.dataset.text.split('|').map((seg, i) =>
+    [...seg].map(c => `<span class="w${i === 2 ? ' g' : ''}">${c}</span>`).join('') + '<br>').join('');
+
+  // 23 隠れるヘッダー・09 読了バー・24 スクロールスパイ（GSAPが無くても動く部分）
+  const hd = $('#hd'), bar = $('#progress');
+  let lastY = scrollY;
+  const spyLinks = $$('#spy a'), spyTargets = spyLinks.map(a => $(a.getAttribute('href')));
+  addEventListener('scroll', () => {
+    const y = scrollY;
+    hd.classList.toggle('hide', y > lastY && y > 120);
+    lastY = y;
+    bar.style.transform = `scaleX(${y / (document.documentElement.scrollHeight - innerHeight)})`;
+    let cur = 0;
+    spyTargets.forEach((t, i) => { if (t.getBoundingClientRect().top < innerHeight * .5) cur = i; });
+    spyLinks.forEach((a, i) => a.classList.toggle('on', i === cur));
+  }, { passive: true });
+
+  // 07 タイプライター
+  const tw = $('#tw');
+  function typeIt() {
+    if (tw.dataset.done) return; tw.dataset.done = 1;
+    const t = tw.dataset.text; let i = 0;
+    if (reduce) { tw.textContent = t; return; }
+    (function next() { tw.textContent = t.slice(0, ++i); if (i < t.length) setTimeout(next, 110); })();
+  }
+
+  if (reduce || !window.gsap) {
+    $$('.cu').forEach(e => e.textContent = e.dataset.to);
+    $$('.statement .w').forEach(w => w.classList.add('f'));
+    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && typeIt()));
+    io.observe(tw);
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ヒーロー：04 テキストリビール → 13 線 → 06 ブラーイン（ページを開いたときの1回だけ）
+  const path = $('#rule'), len = path.getTotalLength();
+  gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+  gsap.timeline({ defaults: { ease: 'power4.out' } })
+    .from('.hero .kicker', { opacity: 0, y: 12, duration: .8 })
+    .from('.hero h1 .ch', { yPercent: 110, duration: 1.1, stagger: .045 }, '-=.4')
+    .to(path, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, '-=.5')
+    .from('.hero .sub', { opacity: 0, filter: 'blur(10px)', duration: 1.2 }, '-=1');
+  // 10 パララックス：背景の文字だけゆっくり動く
+  gsap.to('.hero .ghost', { yPercent: -30, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  gsap.to('.hero-in', { yPercent: 18, opacity: .2, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+
+  // 16 マーキー：常に流れ、スクロールの速さで加速
+  const mq = $('#mq'); let x = 0, boost = 0;
+  ScrollTrigger.create({ onUpdate: s => { boost = Math.min(Math.abs(s.getVelocity()) / 120, 14); } });
+  gsap.ticker.add(() => {
+    x -= .6 + boost; boost *= .92;
+    const half = mq.scrollWidth / 2; if (-x >= half) x += half;
+    mq.style.transform = `translateX(${x}px)`;
+  });
+
+  // 14 テキストフィル
+  const ws = $$('.statement .w');
+  ScrollTrigger.create({ trigger: '.statement', start: 'top 70%', end: 'bottom 60%', scrub: true,
+    onUpdate: s => { const n = Math.round(s.progress * ws.length); ws.forEach((w, i) => w.classList.toggle('f', i < n)); } });
+
+  // 11 スクロールズーム ＋ 05 マスクリビール
+  gsap.timeline({ scrollTrigger: { trigger: '#zoom', start: 'top top', end: 'bottom bottom', scrub: .6 } })
+    .to('#frame p span', { clipPath: 'inset(0 0% 0 0)', stagger: .3, duration: .5 })
+    .to('#frame', { width: '100vw', height: '100vh', borderRadius: 0, duration: 1, ease: 'power2.inOut' }, '+=.1')
+    .to('#frame p', { opacity: 0, duration: .3 }, '-=.2');
+
+  // 19 スクロールテリング ＋ 15 背景色トランジション
+  const words = $$('.story .word b'), bars = $$('.story .meter i'), no = $('#stepNo');
+  $$('.panel').forEach(p => {
+    const i = +p.dataset.step;
+    ScrollTrigger.create({ trigger: p, start: 'top 55%', end: 'bottom 55%',
+      onToggle: s => { if (!s.isActive) return;
+        words.forEach((w, k) => w.classList.toggle('on', k === i));
+        bars.forEach((b, k) => b.classList.toggle('on', k <= i));
+        no.textContent = `段階 ${i + 1} / 3`;
+        document.body.classList.remove('s1', 's2', 's3'); document.body.classList.add('s' + (i + 1));
+        document.body.classList.toggle('dark', i === 2);
+      } });
+    gsap.from(p.children, { opacity: 0, y: 30, stagger: .12, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: p, start: 'top 70%' } });
+  });
+  ScrollTrigger.create({ trigger: '#steps', start: 'bottom 50%', onEnter: () => { document.body.className = 's1'; }, onLeaveBack: () => { document.body.className = 's3 dark'; } });
+  ScrollTrigger.create({ trigger: '#steps', start: 'top 50%', onLeaveBack: () => { document.body.className = 's1'; } });
+
+  // 08 カウントアップ ＋ 03 スタッガー
+  gsap.to('.numbers .rv', { opacity: 1, y: 0, stagger: .15, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: '.numbers', start: 'top 75%' } });
+  $$('.cu').forEach(e => {
+    const o = { v: 0 };
+    gsap.to(o, { v: +e.dataset.to, duration: 1.6, ease: 'power2.out', onUpdate: () => e.textContent = Math.round(o.v), scrollTrigger: { trigger: e, start: 'top 80%' } });
+  });
+
+  // 22 横スクロール（18 ピン留め＋スクラブ）
+  const rail = $('#rail');
+  gsap.to(rail, { x: () => -(rail.scrollWidth - innerWidth), ease: 'none',
+    scrollTrigger: { trigger: '.hscroll', start: 'top top', end: () => '+=' + (rail.scrollWidth - innerWidth), pin: true, scrub: .8, invalidateOnRefresh: true } });
+
+  // 20 カードスタック：下のカードが重なるにつれ、上のカードが少し縮む
+  const cards = $$('.sc');
+  cards.forEach((c, i) => {
+    if (i === cards.length - 1) return;
+    gsap.to(c, { scale: .92, opacity: .6, ease: 'none', scrollTrigger: { trigger: cards[i + 1], start: 'top 90%', end: 'top 25%', scrub: true } });
+  });
+
+  // 01 フェードイン
+  $$('.stack .rv, .about .rv').forEach(e => gsap.to(e, { opacity: 1, y: 0, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: e, start: 'top 80%' } }));
+
+  ScrollTrigger.create({ trigger: '#check', start: 'top 70%', onEnter: typeIt });
+})();
+</script>
+</body>
+</html>

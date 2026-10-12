@@ -12,6 +12,8 @@ main{padding:56px 0}
 h1{font-family:"Shippori Mincho B1",serif;color:var(--navy);font-size:28px;margin:0 0 8px}
 .opts{display:grid;gap:20px;grid-template-columns:1fr;margin-top:32px}
 @media(min-width:760px){.opts{grid-template-columns:1fr 1fr}}
+.opts a.new{grid-column:1/-1;background:var(--gold)}
+.opts a.new b{color:#fff}.opts a.new p{color:#fff}
 .opts a{display:block;text-decoration:none;background:var(--navy);color:#fff;border-radius:6px;padding:28px}
 .opts a b{font-family:"Shippori Mincho B1",serif;font-size:24px;color:var(--gold-soft);display:block;margin-bottom:8px}
 .opts a p{margin:0;color:#d9dce4;font-size:15px}
@@ -23,6 +25,7 @@ h1{font-family:"Shippori Mincho B1",serif;color:var(--navy);font-size:28px;margi
   <h1>トップページ案（テスト）</h1>
   <p class="lead-s">WordPressに移ったときのトップページの方向を見比べるためのサンプルです。どちらもスマホで開いてみてください。</p>
   <div class="opts">
+    <a class="new" href="c/"><b>案C　スクロールで読む（新）</b><p>スクロールに合わせて、文字がせり上がる・色が塗られる・枠が全画面に広がる・段階が切り替わる・カードが横に流れる・重なる。雑誌のような動きの案です。</p></a>
     <a href="a/"><b>案A　くもった鏡</b><p>最初の画面は、くもった鏡。指やマウスでふくと「気づく、変わる、選ばれる。」が出てきます。</p></a>
     <a href="b/"><b>案B　朝の12か所</b><p>下へ読み進めると、鼻毛・ヒゲ・眉…と1か所ずつチェックが入り、そのまま直し方の記事へ進めます。</p></a>
   </div>
